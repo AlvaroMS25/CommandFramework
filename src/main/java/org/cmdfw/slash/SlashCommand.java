@@ -1,6 +1,6 @@
 package org.cmdfw.slash;
 
-public abstract class SlashCommand {
-    abstract SlashCommandBuilder register(SlashCommandBuilder builder);
-    abstract void execute(SlashCommandContext context) throws Exception;
+public interface SlashCommand {
+    SlashCommandBuilder register(SlashCommandBuilder builder);
+    void execute(SlashCommandContext context) throws Exception;
 }

@@ -8,43 +8,43 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.function.Function;
 
-public abstract class SlashCommandArgument {
-    SlashCommandArgument string() {
+public interface SlashCommandArgument {
+    default SlashCommandArgument string() {
         return setOptionType(OptionType.STRING);
     }
 
-    SlashCommandArgument integer() {
+    default SlashCommandArgument integer() {
         return setOptionType(OptionType.INTEGER);
     }
 
-    SlashCommandArgument bool() {
+    default SlashCommandArgument bool() {
         return setOptionType(OptionType.BOOLEAN);
     }
 
-    SlashCommandArgument user() {
+    default SlashCommandArgument user() {
         return setOptionType(OptionType.USER);
     }
 
-    SlashCommandArgument channel() {
+    default SlashCommandArgument channel() {
         return setOptionType(OptionType.CHANNEL);
     }
 
-    SlashCommandArgument role() {
+    default SlashCommandArgument role() {
         return setOptionType(OptionType.ROLE);
     }
 
-    SlashCommandArgument mentionable() {
+    default SlashCommandArgument mentionable() {
         return setOptionType(OptionType.MENTIONABLE);
     }
 
-    SlashCommandArgument number() {
+    default SlashCommandArgument number() {
         return setOptionType(OptionType.NUMBER);
     }
 
-    SlashCommandArgument attachment() {
+    default SlashCommandArgument attachment() {
         return setOptionType(OptionType.ATTACHMENT);
     }
-    SlashCommandArgument autocompleteManaged(Function<AutocompleteContext, Command.Choice[]> provider) {
+    default SlashCommandArgument autocompleteManaged(Function<AutocompleteContext, Command.Choice[]> provider) {
         return autocomplete(cx -> {
             cx.getEvent().replyChoices(provider.apply(cx)).queue();
             return null;
