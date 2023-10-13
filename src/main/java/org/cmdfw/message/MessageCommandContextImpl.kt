@@ -9,16 +9,9 @@ internal class MessageCommandContextImpl(
     private val event: MessageReceivedEvent,
     private val args: MutableList<String>
 ) : MessageCommandContext {
-    override fun getArgs(): MutableList<String> {
-        return args
-    }
+    override fun getArgs(): MutableList<String> = args
 
-    override fun getJda(): JDA {
-        return this.jda
-    }
+    override fun getJda(): JDA = jda
 
-    override fun getEvent(): MessageReceivedEvent {
-        return this.event
-    }
-
+    override fun getEvent(): MessageReceivedEvent = event
 }
