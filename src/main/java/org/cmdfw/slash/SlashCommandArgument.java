@@ -50,10 +50,10 @@ public interface SlashCommandArgument {
             return null;
         });
     }
-    abstract SlashCommandArgument autocomplete(Function<AutocompleteContext, Void> provider);
-    abstract SlashCommandArgument setOptionType(@NotNull OptionType t);
-    abstract SlashCommandArgument setName(@NotNull String name);
-    abstract SlashCommandArgument setDescription(@NotNull String description);
-    abstract SlashCommandArgument addChoices(NameValue... choices) throws UnsupportedChoicesException;
-    abstract SlashCommandBuilder finish();
+    SlashCommandArgument autocomplete(Function<AutocompleteContext, Void> provider);
+    SlashCommandArgument setOptionType(@NotNull OptionType t);
+    SlashCommandArgument setName(@NotNull String name);
+    SlashCommandArgument setDescription(@NotNull String description);
+    SlashCommandArgument addChoices(NameValue... choices) throws UnsupportedChoicesException;
+    SlashCommandBuilder finish();
 }
