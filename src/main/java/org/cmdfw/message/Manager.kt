@@ -29,14 +29,11 @@ internal class Manager(
             command = this.getCommand(mutableListOf(content))
         } else {
             val (separated, initialLength) = this.parseSpaces(content)
-            println("Before: $separated")
             command = this.getCommand(separated)
-            println("After $separated")
 
             if(command != null) {
                 val splitIndex = initialLength - calculateLength(separated)
                 val argsSubstring = content.substring(splitIndex)
-                println("New substring: $argsSubstring")
                 args = this.parseArgs(argsSubstring.split(separator).toMutableList())
             }
         }
