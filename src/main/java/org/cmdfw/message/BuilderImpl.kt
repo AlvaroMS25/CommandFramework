@@ -2,7 +2,7 @@ package org.cmdfw.message
 
 import java.util.function.Function
 
-internal open class BuilderImpl(val messageCommand: MessageCommand) : MessageCommandBuilder {
+internal class BuilderImpl(val messageCommand: MessageCommand) : MessageCommandBuilder {
     val subCommands: MutableList<BuilderImpl> = mutableListOf()
     lateinit var name: String
     lateinit var description: String
