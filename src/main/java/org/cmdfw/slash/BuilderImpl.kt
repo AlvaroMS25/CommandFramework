@@ -8,11 +8,23 @@ class BuilderImpl(private val jda: JDA, private val slashCommand: SlashCommand) 
     internal val arguments = mutableListOf<Argument>()
     private val syncGlobally = false
     private val guildsToSync = mutableListOf<Long>()
+    private lateinit var name: String
+    private lateinit var description: String
     override fun syncGlobally(): SlashCommandBuilder {
         return this
     }
 
     override fun syncOnGuilds(vararg id: Long): SlashCommandBuilder {
+        return this
+    }
+
+    override fun setName(name: String): SlashCommandBuilder {
+        this.name = name
+        return this
+    }
+
+    override fun setDescription(description: String): SlashCommandBuilder {
+        this.description = description
         return this
     }
 
