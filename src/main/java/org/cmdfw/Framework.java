@@ -31,7 +31,7 @@ public class Framework {
     }
 
     public EventListener getEventListener() {
-        return new EventListenerImpl(this);
+        return new EventListenerImpl(this.messageCommandManager, this.slashCommandManager);
     }
 
     public void setPrefixProvider(PrefixProvider provider) {

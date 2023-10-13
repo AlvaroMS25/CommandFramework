@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import java.util.Optional
 
-class BuilderImpl(private val jda: JDA, private val slashCommand: SlashCommand) : SlashCommandBuilder {
+internal class BuilderImpl(private val jda: JDA, private val slashCommand: SlashCommand) : SlashCommandBuilder {
     internal val arguments = mutableListOf<Argument>()
     private var syncGlobally = false
     private val guildsToSync = mutableListOf<Long>()

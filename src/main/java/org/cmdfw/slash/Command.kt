@@ -1,4 +1,4 @@
 package org.cmdfw.slash
 
-class Command {
+internal class Command {
 }

@@ -4,10 +4,10 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 
-class SlashCommandContextImpl : SlashCommandContext {
+internal class SlashCommandContextImpl : SlashCommandContext {
 }
 
-class AutocompleteContextImpl(private val event: CommandAutoCompleteInteractionEvent) : AutocompleteContext {
+internal class AutocompleteContextImpl(private val event: CommandAutoCompleteInteractionEvent) : AutocompleteContext {
     override fun getEvent(): CommandAutoCompleteInteractionEvent {
         return this.event
     }
