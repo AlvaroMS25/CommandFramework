@@ -32,9 +32,11 @@ internal class Manager(
             command = this.getCommand(separated)
 
             if(command != null) {
-                val splitIndex = initialLength - calculateLength(separated)
-                val argsSubstring = content.substring(splitIndex)
-                args = this.parseArgs(argsSubstring.split(separator).toMutableList())
+                if(separated.isNotEmpty()) {
+                    val splitIndex = initialLength - calculateLength(separated)
+                    val argsSubstring = content.substring(splitIndex)
+                    args = this.parseArgs(argsSubstring.split(separator).toMutableList())
+                }
             }
         }
 

@@ -6,7 +6,7 @@ internal class Command(builderImpl: BuilderImpl) {
     private val command: MessageCommand
     private val subCommands: MutableList<Command>
     private val name: String
-    private val description: String
+    private val description: String?
     private val aliases: MutableList<String>
     private val checks: MutableList<Function<MessageCommandContext, Boolean>>
 

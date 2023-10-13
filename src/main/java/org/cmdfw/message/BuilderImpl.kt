@@ -5,7 +5,7 @@ import java.util.function.Function
 internal class BuilderImpl(val messageCommand: MessageCommand) : MessageCommandBuilder {
     val subCommands: MutableList<BuilderImpl> = mutableListOf()
     lateinit var name: String
-    lateinit var description: String
+    var description: String? = null
     val aliases: MutableList<String> = mutableListOf()
     val checks: MutableList<Function<MessageCommandContext, Boolean>> = mutableListOf()
 
