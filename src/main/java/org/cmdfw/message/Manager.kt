@@ -20,7 +20,7 @@ internal class Manager(
             return
         }
 
-        val content = event.message.contentRaw.substring(separator.length)
+        val content = event.message.contentRaw.substring(commandPrefix.length)
         val firstSpace = content.indexOf(" ")
         val command: Command?
         var args: MutableList<String> = mutableListOf()
@@ -28,11 +28,15 @@ internal class Manager(
         if(firstSpace == -1) {
             command = this.getCommand(mutableListOf(content))
         } else {
-            val (separated, consumed) = this.parseSpaces(content)
-            command = this.getCommand(separated.toMutableList())
+            val (separated, initialLength) = this.parseSpaces(content)
+            println("Before: $separated")
+            command = this.getCommand(separated)
+            println("After $separated")
 
             if(command != null) {
-                val argsSubstring = content.substring(consumed)
+                val splitIndex = initialLength - calculateLength(separated)
+                val argsSubstring = content.substring(splitIndex)
+                println("New substring: $argsSubstring")
                 args = this.parseArgs(argsSubstring.split(separator).toMutableList())
             }
         }
@@ -75,14 +79,14 @@ internal class Manager(
         throw UncompleteQuotedArgumentException(item)
     }
 
-    private fun parseSpaces(item: String) : Pair<List<String>, Int> {
+    private fun parseSpaces(item: String) : Pair<MutableList<String>, Int> {
         val spaced = item.splitToSequence(" ")
-            .toList()
+            .toMutableList()
 
-        val totalChars = spaced.sumOf { it.length } + spaced.size - 1
-
-        return Pair(spaced, totalChars)
+        return Pair(spaced, calculateLength(spaced))
     }
+
+    private fun calculateLength(item: List<String>): Int = item.sumOf { it.length } + item.size - 1
 
     private fun getCommand(items: MutableList<String>) : Command? {
         if(items.isEmpty()) return null

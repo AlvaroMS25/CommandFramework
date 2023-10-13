@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     api("net.dv8tion:JDA:$jdaV")
+    api("io.github.cdimascio:dotenv-java:3.0.0")
 }
 
 kotlin {
