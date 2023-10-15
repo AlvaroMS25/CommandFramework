@@ -1,18 +1,23 @@
 package org.cmdfw.slash
 
-import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import org.cmdfw.slash.builders.SlashCommandArgument
+import org.cmdfw.slash.builders.SlashCommandBuilder
 import java.util.function.Function
 
 internal class Argument(
-    private val parent: BuilderImpl
+    private val parent: CommandBuilder
 ) : SlashCommandArgument {
-    private lateinit var name: String
-    private lateinit var description: String
-    private lateinit var jda: JDA
-    private lateinit var optionType: OptionType
-    private val choices: MutableList<NameValue> = mutableListOf()
-    private var autocompleteProvider: Function<AutocompleteContext, Void>? = null
+    lateinit var name: String
+    lateinit var description: String
+    var required = false
+    lateinit var optionType: OptionType
+    val choices: MutableList<NameValue> = mutableListOf()
+    var autocompleteProvider: Function<AutocompleteContext, Void>? = null
+    var maxValue: Number? = null
+    var minValue: Number? = null
     override fun autocomplete(provider: Function<AutocompleteContext, Void>?): SlashCommandArgument {
         this.autocompleteProvider = provider
         return this
@@ -33,13 +38,55 @@ internal class Argument(
         return this
     }
 
+    override fun setRequired(required: Boolean): SlashCommandArgument {
+        this.required = required
+        return this
+    }
+
+    override fun setMinValue(value: Number): SlashCommandArgument? {
+        this.minValue = value
+        return this
+    }
+
+    override fun setMaxValue(value: Number): SlashCommandArgument? {
+        this.maxValue = value
+        return this
+    }
+
     override fun addChoices(vararg choices: NameValue?): SlashCommandArgument {
         this.choices.addAll(choices.filterNotNull())
         return this
     }
 
-    override fun finish(): SlashCommandBuilder {
+    fun finish(): SlashCommandBuilder {
         this.parent.arguments.add(this)
-        return this.parent
+        //return this.parent
+        TODO() 
+    }
+
+    fun asOption(): OptionData {
+        val data = OptionData(optionType, name, description)
+
+        this.minValue?.let {
+            if (it is Float || it is Double) {
+                data.setMinValue(it as Double)
+            } else {
+                data.setMinValue(it as Long)
+            }
+        }
+
+        this.maxValue?.let {
+            if (it is Float || it is Double) {
+                data.setMinValue(it as Double)
+            } else {
+                data.setMinValue(it as Long)
+            }
+        }
+
+        data.setAutoComplete(this.autocompleteProvider != null)
+            .setRequired(this.required)
+            .addChoices(this.choices.map { Command.Choice(it.name, it.value) })
+
+        return data
     }
 }

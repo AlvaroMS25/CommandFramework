@@ -2,9 +2,16 @@ package org.cmdfw.slash
 
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.Commands
 
-internal class SlashCommandContextImpl : SlashCommandContext {
+internal class SlashCommandContextImpl(
+    private val event: SlashCommandInteractionEvent
+) : SlashCommandContext {
+    override fun getJda(): JDA = event.jda
+
+    override fun getEvent(): SlashCommandInteractionEvent = event
 }
 
 internal class AutocompleteContextImpl(private val event: CommandAutoCompleteInteractionEvent) : AutocompleteContext {

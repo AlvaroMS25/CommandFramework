@@ -1,14 +1,15 @@
-package org.cmdfw.slash;
+package org.cmdfw.slash.builders;
 
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.cmdfw.exceptions.UnsupportedChoicesException;
+import org.cmdfw.slash.AutocompleteContext;
+import org.cmdfw.slash.NameValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.function.Function;
 
-public interface SlashCommandArgument {
+public interface SlashCommandArgument extends BasePropertiesSetter<SlashCommandArgument> {
     default SlashCommandArgument string() {
         return setOptionType(OptionType.STRING);
     }
@@ -52,8 +53,8 @@ public interface SlashCommandArgument {
     }
     SlashCommandArgument autocomplete(Function<AutocompleteContext, Void> provider);
     SlashCommandArgument setOptionType(@NotNull OptionType t);
-    SlashCommandArgument setName(@NotNull String name);
-    SlashCommandArgument setDescription(@NotNull String description);
+    SlashCommandArgument setRequired(boolean required);
+    SlashCommandArgument setMinValue(@NotNull Number value);
+    SlashCommandArgument setMaxValue(@NotNull Number value);
     SlashCommandArgument addChoices(NameValue... choices) throws UnsupportedChoicesException;
-    SlashCommandBuilder finish();
 }
