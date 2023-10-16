@@ -1,5 +1,5 @@
 package org.cmdfw.slash
 
-internal interface BuildableContainer {
-    fun build(): InternalSlashCommandContainer
+internal interface BuildableContainer<T> {
+    fun build(): T
 }

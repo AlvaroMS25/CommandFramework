@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
-internal class Command(builder: CommandBuilder) {
+internal class Command(builder: CommandBuilder): SlashCommandDataGetter {
     var arguments = mutableListOf<Argument>()
     var name: String
     var description: String
@@ -21,7 +21,7 @@ internal class Command(builder: CommandBuilder) {
         isNsfw = builder.isNsfw
     }
 
-    fun create(): SlashCommandData {
+    override fun getData(): SlashCommandData {
         return Commands.slash(name, name)
             .addOptions(*arguments.map { a -> a.asOption() }.toTypedArray())
             .setDefaultPermissions(defaultMemberPermissions)
