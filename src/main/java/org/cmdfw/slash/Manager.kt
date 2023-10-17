@@ -11,7 +11,10 @@ internal class Manager(private val jda: JDA) : SlashCommandManager {
     val groups = mutableMapOf<String, SubcommandGroup>()
 
     private fun getCommands(): List<SlashCommandData> {
-        return commands.values.map { it.getData() }
+        val list = commands.values.map { it.getData() }.toMutableList()
+        list.addAll(groups.values.map { it.getData() })
+
+        return list
     }
 
     override fun registerAll() {
@@ -21,7 +24,10 @@ internal class Manager(private val jda: JDA) : SlashCommandManager {
     }
 
     override fun registerAtGuild(guild: Long) {
-        jda.getGuildById(guild)?.updateCommands()?.addCommands(*getCommands().toTypedArray())?.queue()
+        jda.getGuildById(guild)
+            ?.updateCommands()
+            ?.addCommands(*getCommands().toTypedArray())
+            ?.queue()
     }
 
     override fun register(command: SlashCommand?) {
@@ -32,7 +38,14 @@ internal class Manager(private val jda: JDA) : SlashCommandManager {
 
     @Throws(Exception::class)
     fun runCommand(event: SlashCommandInteractionEvent) {
+        val command: Command?
+        if(event.interaction.subcommandGroup != null || event.interaction.subcommandName == null) {
+            command = this.groups.get(event.interaction.name)?.getCommand(event.interaction)
+        } else {
+            command = this.commands.get(event.interaction.name)
+        }
 
+        command?.execute(SlashCommandContextImpl(event))
     }
 
     fun autocomplete(event: CommandAutoCompleteInteractionEvent) {

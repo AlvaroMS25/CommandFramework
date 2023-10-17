@@ -6,22 +6,23 @@ import org.cmdfw.slash.builders.SlashCommandBuilder;
 
 import java.util.Objects;
 
-public class SlashSimple implements SlashCommand {
+public class InnerSlashTest implements SlashCommand {
     @Override
     public void register(SlashCommandBuilder builder) {
         builder.simple()
-                .setName("juan")
-                .setDescription("La vida es dura")
+                .setName("inner")
+                .setDescription("Inner command")
                 .addArgument()
                 .string()
-                .setName("Algo")
-                .setDescription("Algo pa repetir");
+                .setName("item")
+                .setDescription("Item to repeat")
+                .finish();
     }
 
     @Override
     public void execute(SlashCommandContext context) throws Exception {
-        String algo = Objects.requireNonNull(context.getEvent().getInteraction().getOption("Algo")).getAsString();
+        String a = Objects.requireNonNull(context.getInteraction().getOption("item")).getAsString();
 
-        context.getInteraction().reply(String.format("Arg: %s", algo)).queue();
+        context.getEvent().reply(String.format("You said: %s", a)).queue();
     }
 }

@@ -64,9 +64,7 @@ internal class Argument(
         return this.parent
     }
 
-    fun asOption(): OptionData {
-        val data = OptionData(optionType, name, description)
-
+    private fun setValues(data: OptionData) {
         this.minValue?.let {
             if (it is Float || it is Double) {
                 data.setMinValue(it as Double)
@@ -82,6 +80,12 @@ internal class Argument(
                 data.setMinValue(it as Long)
             }
         }
+    }
+
+    fun asOption(): OptionData {
+        val data = OptionData(optionType, name, description)
+
+        setValues(data)
 
         data.setAutoComplete(this.autocompleteProvider != null)
             .setRequired(this.required)

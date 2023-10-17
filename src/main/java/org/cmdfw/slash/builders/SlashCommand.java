@@ -4,5 +4,5 @@ import org.cmdfw.slash.SlashCommandContext;
 
 public interface SlashCommand {
     void register(SlashCommandBuilder builder);
-    void execute(SlashCommandContext context) throws Exception;
+    default void execute(SlashCommandContext context) throws Exception {}
 }

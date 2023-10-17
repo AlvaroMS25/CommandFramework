@@ -1,8 +1,8 @@
 package org.cmdfw.slash
 
-import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import org.cmdfw.slash.builders.*
+import java.lang.RuntimeException
 
 internal class BaseBuilder(
     private val slashCommand: SlashCommand
@@ -52,6 +52,28 @@ internal class BaseBuilder(
     }
 }
 
+private class OnlySimpleCommandsBuilder() : SlashCommandBuilder, InternalSlashCommandContainer {
+    var command: CommandBuilder? = null
+    override fun registerCommand(builder: CommandBuilder) {
+        if(this.command == null)
+            this.command = builder
+        else
+            throw RuntimeException("Only one command expected")
+    }
+    override fun simple(): SimpleCommandBuilder {
+        return CommandBuilder(this)
+    }
+
+    override fun addSubcommands(): SimpleGroupBuilder {
+        throw RuntimeException("Only simple commands supported")
+    }
+
+    override fun addSubcommandGroup(): SubcommandGroupBuilder {
+        throw RuntimeException("Only simple commands supported")
+    }
+
+}
+
 internal class CommandBuilder(
     private val container: InternalSlashCommandContainer
 ) : SimpleCommandBuilder, BuildableContainer<Command> {
@@ -81,8 +103,8 @@ internal class CommandBuilder(
         return this
     }
 
-    override fun setGuildOnly(isGuildOnly: Boolean): SimpleCommandBuilder {
-        this.guildOnly = isGuildOnly
+    override fun setGuildOnly(isOnlyGuilds: Boolean): SimpleCommandBuilder {
+        this.guildOnly = isOnlyGuilds
         return this
     }
 
@@ -130,8 +152,18 @@ internal class SimpleBuilder(
         return this
     }
 
-    override fun addCommand(): SimpleCommandBuilder {
+    override fun buildCommand(): SimpleCommandBuilder {
         return CommandBuilder(this)
+    }
+
+
+    override fun addCommand(command: SlashCommand): SimpleGroupBuilder {
+        val builder = OnlySimpleCommandsBuilder()
+        command.register(builder)
+
+        if(builder.command != null)
+            this.commands.add(builder.command!!)
+        return this
     }
 
     override fun setDescription(description: String): SimpleGroupBuilder {
@@ -144,8 +176,8 @@ internal class SimpleBuilder(
         return this
     }
 
-    override fun setGuildOnly(isGuildOnly: Boolean): SimpleGroupBuilder {
-        this.guildOnly = isGuildOnly
+    override fun setGuildOnly(isOnlyGuilds: Boolean): SimpleGroupBuilder {
+        this.guildOnly = isOnlyGuilds
         return this
     }
 
