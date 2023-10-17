@@ -13,7 +13,7 @@ internal class Command(builder: CommandBuilder): SlashCommandDataGetter {
     var defaultMemberPermissions = DefaultMemberPermissions.ENABLED
     var guildOnly: Boolean
     var isNsfw: Boolean
-    lateinit var inner: SlashCommand
+    var inner: SlashCommand
 
     init {
         arguments = builder.arguments
@@ -22,6 +22,7 @@ internal class Command(builder: CommandBuilder): SlashCommandDataGetter {
         defaultMemberPermissions = builder.defaultMemberPermissions
         guildOnly = builder.guildOnly
         isNsfw = builder.isNsfw
+        inner = builder.slashCommand
     }
 
     override fun getData(): SlashCommandData {

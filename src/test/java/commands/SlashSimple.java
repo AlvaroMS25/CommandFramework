@@ -14,13 +14,14 @@ public class SlashSimple implements SlashCommand {
                 .setDescription("La vida es dura")
                 .addArgument()
                 .string()
-                .setName("Algo")
-                .setDescription("Algo pa repetir");
+                .setName("algo")
+                .setDescription("Algo pa repetir")
+                .finish();
     }
 
     @Override
     public void execute(SlashCommandContext context) throws Exception {
-        String algo = Objects.requireNonNull(context.getEvent().getInteraction().getOption("Algo")).getAsString();
+        String algo = context.getEvent().getInteraction().getOption("algo").getAsString();
 
         context.getInteraction().reply(String.format("Arg: %s", algo)).queue();
     }

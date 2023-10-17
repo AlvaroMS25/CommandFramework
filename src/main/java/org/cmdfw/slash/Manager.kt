@@ -38,11 +38,10 @@ internal class Manager(private val jda: JDA) : SlashCommandManager {
 
     @Throws(Exception::class)
     fun runCommand(event: SlashCommandInteractionEvent) {
-        val command: Command?
-        if(event.interaction.subcommandGroup != null || event.interaction.subcommandName == null) {
-            command = this.groups.get(event.interaction.name)?.getCommand(event.interaction)
+        val command = if(event.interaction.subcommandGroup != null || event.interaction.subcommandName != null) {
+            this.groups.get(event.interaction.name)?.getCommand(event.interaction)
         } else {
-            command = this.commands.get(event.interaction.name)
+            this.commands.get(event.interaction.name)
         }
 
         command?.execute(SlashCommandContextImpl(event))

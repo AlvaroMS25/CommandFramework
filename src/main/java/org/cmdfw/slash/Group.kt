@@ -84,7 +84,7 @@ internal class SubcommandGroup(
 
         if(this.isGroup()) {
             val subgroups = this.groups!!.values.map {
-                val subgroupData = SubcommandGroupData(this.name, this.description)
+                val subgroupData = SubcommandGroupData(it.name, it.description)
                 subgroupData.addSubcommands(it.createSubcommands())
             }
 
