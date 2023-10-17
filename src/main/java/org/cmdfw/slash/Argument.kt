@@ -3,6 +3,7 @@ package org.cmdfw.slash
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import org.cmdfw.slash.builders.SimpleCommandBuilder
 import org.cmdfw.slash.builders.SlashCommandArgument
 import org.cmdfw.slash.builders.SlashCommandBuilder
 import java.util.function.Function
@@ -58,10 +59,9 @@ internal class Argument(
         return this
     }
 
-    fun finish(): SlashCommandBuilder {
+    override fun finish(): SimpleCommandBuilder {
         this.parent.arguments.add(this)
-        //return this.parent
-        TODO() 
+        return this.parent
     }
 
     fun asOption(): OptionData {
