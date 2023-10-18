@@ -2,84 +2,11 @@ package org.cmdfw.slash
 
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import org.cmdfw.slash.builders.*
-import java.lang.RuntimeException
-
-internal class BaseBuilder(
-    private val slashCommand: SlashCommand
-) : SlashCommandBuilder, InternalSlashCommandContainer
-{
-    private val commands = mutableListOf<CommandBuilder>()
-    private val simpleGroups = mutableListOf<SimpleBuilder>()
-    private val subcommandGroups = mutableListOf<GroupBuilder>()
-    fun build(manager: Manager) {
-        this.slashCommand.register(this)
-
-        for(c in this.commands) {
-            manager.commands[c.name] = c.build()
-        }
-
-        for(sg in this.simpleGroups) {
-            manager.groups[sg.name] = sg.build()
-        }
-
-        for(scg in this.subcommandGroups) {
-            manager.groups[scg.name] = scg.build()
-        }
-    }
-
-    override fun simple(): SimpleCommandBuilder {
-        return CommandBuilder(this, slashCommand)
-    }
-
-    override fun addSubcommands(): SimpleGroupBuilder {
-        return SimpleBuilder(this)
-    }
-
-    override fun addSubcommandGroup(): SubcommandGroupBuilder {
-        return GroupBuilder(this)
-    }
-
-    override fun registerCommand(builder: CommandBuilder) {
-        this.commands.add(builder)
-    }
-
-    override fun registerSimpleGroup(builder: SimpleBuilder) {
-        this.simpleGroups.add(builder)
-    }
-
-    override fun registerSubCommandGroup(builder: GroupBuilder) {
-        this.subcommandGroups.add(builder)
-    }
-}
-
-private class OnlySimpleCommandsBuilder(
-    private val slashCommand: SlashCommand
-) : SlashCommandBuilder, InternalSlashCommandContainer {
-    var command: CommandBuilder? = null
-    override fun registerCommand(builder: CommandBuilder) {
-        if(this.command == null)
-            this.command = builder
-        else
-            throw RuntimeException("Only one command expected")
-    }
-    override fun simple(): SimpleCommandBuilder {
-        return CommandBuilder(this, slashCommand)
-    }
-
-    override fun addSubcommands(): SimpleGroupBuilder {
-        throw RuntimeException("Only simple commands supported")
-    }
-
-    override fun addSubcommandGroup(): SubcommandGroupBuilder {
-        throw RuntimeException("Only simple commands supported")
-    }
-
-}
 
 internal class CommandBuilder(
     container: InternalSlashCommandContainer,
     val slashCommand: SlashCommand
-) : SimpleCommandBuilder, BuildableContainer<Command> {
+) : BuildableContainer<Command>, SlashCommandBuilder {
     val arguments = mutableListOf<Argument>()
     lateinit var name: String
     lateinit var description: String
@@ -88,30 +15,31 @@ internal class CommandBuilder(
     var isNsfw = false
 
     init {
+        slashCommand.register(this)
         container.registerCommand(this)
     }
 
-    override fun setName(name: String): SimpleCommandBuilder {
+    override fun setName(name: String): SlashCommandBuilder {
         this.name = name
         return this
     }
 
-    override fun setDescription(description: String): SimpleCommandBuilder {
+    override fun setDescription(description: String): SlashCommandBuilder {
         this.description = description
         return this
     }
 
-    override fun setDefaultPermissions(permission: DefaultMemberPermissions): SimpleCommandBuilder {
+    override fun setDefaultPermissions(permission: DefaultMemberPermissions): SlashCommandBuilder {
         this.defaultMemberPermissions = permission
         return this
     }
 
-    override fun setGuildOnly(isOnlyGuilds: Boolean): SimpleCommandBuilder {
+    override fun setGuildOnly(isOnlyGuilds: Boolean): SlashCommandBuilder {
         this.guildOnly = isOnlyGuilds
         return this
     }
 
-    override fun setNsfw(isNsfw: Boolean): SimpleCommandBuilder {
+    override fun setNsfw(isNsfw: Boolean): SlashCommandBuilder {
         this.isNsfw = isNsfw
         return this
     }
@@ -126,8 +54,8 @@ internal class CommandBuilder(
 }
 
 internal class SimpleBuilder(
-    private val container: InternalSlashCommandContainer,
-): SimpleGroupBuilder, InternalSlashCommandContainer, BuildableContainer<SubcommandGroup>
+    private val container: InternalSlashCommandContainer?,
+): SimpleGroupBuilder, InternalSlashCommandContainer, BuildableContainer<SubCommandGroupImpl>
 {
     lateinit var name: String
     lateinit var description: String
@@ -137,7 +65,12 @@ internal class SimpleBuilder(
     val commands = mutableListOf<CommandBuilder>()
 
     init {
-        container.registerSimpleGroup(this)
+        container?.registerSimpleGroup(this)
+    }
+
+    fun register(group: SubCommandGroup): Boolean {
+        group.register(this)
+        return this.commands.size > 0
     }
 
     fun getAsMap(): MutableMap<String, Command> {
@@ -155,17 +88,16 @@ internal class SimpleBuilder(
         return this
     }
 
-    override fun buildCommand(): SimpleCommandBuilder {
+    override fun addCommand(): DeferredSlashCommandBuilder {
         TODO()
     }
 
 
     override fun addCommand(command: SlashCommand): SimpleGroupBuilder {
-        val builder = OnlySimpleCommandsBuilder(command)
+        val builder = CommandBuilder(this, command)
         command.register(builder)
 
-        if(builder.command != null)
-            this.commands.add(builder.command!!)
+        this.commands.add(builder)
         return this
     }
 
@@ -189,8 +121,8 @@ internal class SimpleBuilder(
         return this
     }
 
-    override fun build(): SubcommandGroup {
-        return SubcommandGroup(this)
+    override fun build(): SubCommandGroupImpl {
+        return SubCommandGroupImpl(this)
     }
 
     override fun registerCommand(builder: CommandBuilder) {
@@ -199,9 +131,8 @@ internal class SimpleBuilder(
 
 }
 
-internal class GroupBuilder(
-    private val container: InternalSlashCommandContainer,
-): SubcommandGroupBuilder, InternalSlashCommandContainer, BuildableContainer<SubcommandGroup>
+internal class GroupBuilder
+    : SubcommandGroupBuilder, InternalSlashCommandContainer, BuildableContainer<SubCommandGroupImpl>
 {
     lateinit var name: String
     lateinit var description: String
@@ -210,8 +141,9 @@ internal class GroupBuilder(
     var isNsfw = false
     val groups = mutableListOf<SimpleBuilder>()
 
-    init {
-        container.registerSubCommandGroup(this)
+    fun register(group: SubCommandGroup): Boolean {
+        group.register(this)
+        return this.groups.size > 0
     }
 
     override fun setGuildOnly(isOnlyGuilds: Boolean): SubcommandGroupBuilder {
@@ -247,7 +179,7 @@ internal class GroupBuilder(
         this.groups.add(builder)
     }
 
-    override fun build(): SubcommandGroup {
-        return SubcommandGroup(this)
+    override fun build(): SubCommandGroupImpl {
+        return SubCommandGroupImpl(this)
     }
 }

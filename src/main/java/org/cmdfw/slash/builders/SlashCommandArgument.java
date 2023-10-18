@@ -57,5 +57,5 @@ public interface SlashCommandArgument extends BasePropertiesSetter<SlashCommandA
     SlashCommandArgument setMinValue(@NotNull Number value);
     SlashCommandArgument setMaxValue(@NotNull Number value);
     SlashCommandArgument addChoices(NameValue... choices) throws UnsupportedChoicesException;
-    SimpleCommandBuilder finish();
+    SlashCommandBuilder finish();
 }

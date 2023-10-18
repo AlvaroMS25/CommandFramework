@@ -12,7 +12,7 @@ internal enum class GroupType {
     SubcommandGroup
 }
 
-internal class SubcommandGroup(
+internal class SubCommandGroupImpl(
     val name: String,
     val description: String,
     val requiredPermissions: DefaultMemberPermissions,
