@@ -20,12 +20,12 @@ internal class Command(builderImpl: BuilderImpl) {
     }
 
     fun hasName(name: String): Boolean {
-        return this.name == name
+        return this.name == name || this.aliases.contains(name)
     }
 
     private fun hasChild(name: String) : Command? {
         for(impl in this.subCommands) {
-            if(impl.name == name) {
+            if(impl.name == name || impl.aliases.contains(name)) {
                 return impl
             }
         }
