@@ -9,8 +9,7 @@ import java.util.Objects;
 public class InnerSlashTest implements SlashCommand {
     @Override
     public void register(SlashCommandBuilder builder) {
-        builder.simple()
-                .setName("inner")
+        builder.setName("inner")
                 .setDescription("Inner command")
                 .addArgument()
                 .string()

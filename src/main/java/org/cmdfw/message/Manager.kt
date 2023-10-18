@@ -105,10 +105,11 @@ internal class Manager(
         this.separator = separator
     }
 
-    override fun register(command: MessageCommand?) {
+    override fun register(command: MessageCommand?): MessageCommandManager {
         if(command == null)
-            return
+            return this
 
         this.commands.add(BuilderImpl(command).build())
+        return this
     }
 }

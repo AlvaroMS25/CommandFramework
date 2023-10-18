@@ -7,6 +7,6 @@ public interface SlashCommandManager {
     void registerAll();
     void registerAtGuild(long guildId);
 
-    void register(SlashCommand command);
-    void register(SubCommandGroup group);
+    SlashCommandManager register(SlashCommand command);
+    SlashCommandManager register(SubCommandGroup group);
 }
