@@ -1,4 +1,5 @@
 package org.cmdfw.slash.builders;
 
-public interface DeferredSlashCommandBuilder {
+public interface DeferredSlashCommandBuilder extends BasePropertiesSetter<DeferredSlashCommandBuilder> {
+    SlashCommandArgument addArgument();
 }

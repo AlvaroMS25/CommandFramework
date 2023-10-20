@@ -3,6 +3,7 @@ package org.cmdfw.slash
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import org.cmdfw.exceptions.UnsupportedChoicesException
 import org.cmdfw.slash.builders.SlashCommandArgument
 import org.cmdfw.slash.builders.SlashCommandBuilder
 import java.util.function.Function
@@ -53,7 +54,10 @@ internal class Argument(
         return this
     }
 
+    @Throws(UnsupportedChoicesException::class)
     override fun addChoices(vararg choices: NameValue?): SlashCommandArgument {
+        if(!this.optionType.canSupportChoices())
+            throw UnsupportedChoicesException()
         this.choices.addAll(choices.filterNotNull())
         return this
     }
