@@ -1,7 +1,4 @@
-import commands.MessageTestImpl;
-import commands.SlashSimple;
-import commands.SlashSimpleGroup;
-import commands.SlashSubcommandGroup;
+import commands.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -42,7 +39,8 @@ public class MainTest {
         SlashCommandManager manager = f.getSlashCommandManager();
         manager.register(new SlashSimple());
         manager.register(new SlashSimpleGroup());
-        manager.register(new SlashSubcommandGroup());
+        manager.register(new SlashSubcommandGroup())
+            .register(new Managed());
 
         j.addEventListener(f.getEventListener());
         j.awaitReady();
