@@ -9,8 +9,7 @@ import java.util.Objects;
 public class SlashSimple implements SlashCommand {
     @Override
     public void register(SlashCommandBuilder builder) {
-        builder.simple()
-                .setName("juan")
+        builder.setName("juan")
                 .setDescription("La vida es dura")
                 .addArgument()
                 .string()

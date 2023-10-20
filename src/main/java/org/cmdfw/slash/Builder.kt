@@ -95,7 +95,6 @@ internal class SimpleBuilder(
 
     override fun addCommand(command: SlashCommand): SimpleGroupBuilder {
         val builder = CommandBuilder(this, command)
-        command.register(builder)
 
         this.commands.add(builder)
         return this

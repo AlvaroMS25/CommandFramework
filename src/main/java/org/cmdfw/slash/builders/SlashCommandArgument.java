@@ -51,6 +51,10 @@ public interface SlashCommandArgument extends BasePropertiesSetter<SlashCommandA
             return null;
         });
     }
+
+    default SlashCommandArgument setOptional() {
+        return setRequired(true);
+    }
     SlashCommandArgument autocomplete(Function<AutocompleteContext, Void> provider);
     SlashCommandArgument setOptionType(@NotNull OptionType t);
     SlashCommandArgument setRequired(boolean required);

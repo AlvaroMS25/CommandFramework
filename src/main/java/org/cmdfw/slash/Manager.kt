@@ -44,15 +44,16 @@ internal class Manager(private val jda: JDA) : SlashCommandManager, InternalSlas
             ?.queue()
     }
 
-    override fun register(command: SlashCommand?) {
+    override fun register(command: SlashCommand?): SlashCommandManager {
         if (command == null)
-            return
+            return this
         CommandBuilder(this, command)
+        return this
     }
 
-    override fun register(group: SubCommandGroup?) {
+    override fun register(group: SubCommandGroup?): SlashCommandManager {
         if(group == null)
-            return
+            return this
         val groupBuilder = GroupBuilder()
         val simpleBuilder = SimpleBuilder(null)
         val tuple = groupBuilder.register(group) to simpleBuilder.register(group)
@@ -68,6 +69,7 @@ internal class Manager(private val jda: JDA) : SlashCommandManager, InternalSlas
                 this.registerSimpleGroup(simpleBuilder)
             }
         }
+        return this
     }
 
     @Throws(Exception::class)

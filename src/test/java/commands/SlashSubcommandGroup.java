@@ -2,12 +2,13 @@ package commands;
 
 import org.cmdfw.slash.builders.SlashCommand;
 import org.cmdfw.slash.builders.SlashCommandBuilder;
+import org.cmdfw.slash.builders.SubCommandGroup;
+import org.cmdfw.slash.builders.SubcommandGroupBuilder;
 
-public class SlashSubcommandGroup implements SlashCommand {
+public class SlashSubcommandGroup implements SubCommandGroup {
     @Override
-    public void register(SlashCommandBuilder builder) {
-        builder.addSubcommandGroup()
-                .setName("upgroup")
+    public void register(SubcommandGroupBuilder builder) {
+        builder.setName("upgroup")
                 .setDescription("Testing for subcommand group")
                 .addGroup()
                 .setName("ingroup")

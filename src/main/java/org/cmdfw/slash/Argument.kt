@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import org.cmdfw.slash.builders.SlashCommandArgument
+import org.cmdfw.slash.builders.SlashCommandBuilder
 import java.util.function.Function
 
 internal class Argument(
@@ -11,7 +12,7 @@ internal class Argument(
 ) : SlashCommandArgument {
     lateinit var name: String
     lateinit var description: String
-    var required = false
+    var required = true
     lateinit var optionType: OptionType
     val choices: MutableList<NameValue> = mutableListOf()
     var autocompleteProvider: Function<AutocompleteContext, Void>? = null
@@ -57,7 +58,7 @@ internal class Argument(
         return this
     }
 
-    override fun finish(): SimpleCommandBuilder {
+    override fun finish(): SlashCommandBuilder {
         this.parent.arguments.add(this)
         return this.parent
     }
