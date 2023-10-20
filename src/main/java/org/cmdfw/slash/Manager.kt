@@ -3,6 +3,7 @@ package org.cmdfw.slash
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.cmdfw.slash.builders.SlashCommand
 import org.cmdfw.slash.builders.SubCommandGroup
@@ -71,16 +72,25 @@ internal class Manager(private val jda: JDA) : SlashCommandManager, InternalSlas
 
     @Throws(Exception::class)
     fun runCommand(event: SlashCommandInteractionEvent) {
-        val command = if(event.interaction.subcommandGroup != null || event.interaction.subcommandName != null) {
-            this.groups.get(event.interaction.name)?.getCommand(event.interaction)
-        } else {
-            this.commands.get(event.interaction.name)
-        }
+        getCommand(event)
+            ?.execute(SlashCommandContextImpl(event))
+    }
 
-        command?.execute(SlashCommandContextImpl(event))
+    fun getCommand(interaction: CommandInteractionPayload): Command? {
+        return if(interaction.subcommandGroup != null || interaction.subcommandName != null) {
+            this.groups.get(interaction.name)?.getCommand(interaction)
+        } else {
+            this.commands.get(interaction.name)
+        }
     }
 
     fun autocomplete(event: CommandAutoCompleteInteractionEvent) {
+        val command = getCommand(event)
+        val arg = command?.getArgument(event.focusedOption.name)
 
+        if(arg != null && arg.autocompleteProvider != null) {
+            val context = AutocompleteContextImpl(event)
+            arg.autocompleteProvider!!.apply(context)
+        }
     }
 }

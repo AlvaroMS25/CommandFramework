@@ -40,4 +40,12 @@ internal class Command(builder: CommandBuilder): SlashCommandDataGetter {
     fun execute(context: SlashCommandContext) {
         inner.execute(context)
     }
+
+    fun getArgument(name: String): Argument? {
+        for(arg in this.arguments) {
+            if(arg.name == name)
+                return arg
+        }
+        return null
+    }
 }

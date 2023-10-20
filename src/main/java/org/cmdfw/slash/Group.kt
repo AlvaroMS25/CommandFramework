@@ -1,5 +1,6 @@
 package org.cmdfw.slash
 
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction
 import net.dv8tion.jda.api.interactions.commands.build.Commands
@@ -64,7 +65,7 @@ internal class SubCommandGroupImpl(
     private fun isGroup(): Boolean = !isSimple()
 
 
-    fun getCommand(interaction: SlashCommandInteraction): Command? {
+    fun getCommand(interaction: CommandInteractionPayload): Command? {
         if(interaction.subcommandGroup != null && this.isGroup()) {
             val inner = this.groups!![interaction.subcommandGroup]
             return inner?.commands?.get(interaction.subcommandName)
