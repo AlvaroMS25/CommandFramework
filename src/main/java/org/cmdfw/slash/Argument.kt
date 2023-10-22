@@ -9,7 +9,7 @@ import org.cmdfw.slash.builders.SlashCommandBuilder
 import java.util.function.Function
 
 internal class Argument(
-    private val parent: CommandBuilder
+    private val parent: SlashCommandBuilder
 ) : SlashCommandArgument {
     lateinit var name: String
     lateinit var description: String
@@ -63,7 +63,6 @@ internal class Argument(
     }
 
     override fun finish(): SlashCommandBuilder {
-        this.parent.arguments.add(this)
         return this.parent
     }
 

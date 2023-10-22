@@ -45,11 +45,57 @@ internal class CommandBuilder(
     }
 
     override fun addArgument(): SlashCommandArgument {
-        return Argument(this)
+        val arg = Argument(this)
+        this.arguments.add(arg)
+        return arg
     }
 
     override fun build(): Command {
         return Command(this)
+    }
+}
+
+internal class DeferredCommandBuilder: BuildableContainer<Command>, SlashCommandBuilder {
+    val arguments = mutableListOf<Argument>()
+    lateinit var name: String
+    lateinit var description: String
+    var defaultMemberPermissions: DefaultMemberPermissions = DefaultMemberPermissions.ENABLED
+    var guildOnly = false
+    var isNsfw = false
+
+    override fun setName(name: String): SlashCommandBuilder {
+        this.name = name
+        return this
+    }
+
+    override fun setDescription(description: String): SlashCommandBuilder {
+        this.description = description
+        return this
+    }
+
+    override fun setDefaultPermissions(permission: DefaultMemberPermissions): SlashCommandBuilder {
+        this.defaultMemberPermissions = permission
+        return this
+    }
+
+    override fun setGuildOnly(isOnlyGuilds: Boolean): SlashCommandBuilder {
+        this.guildOnly = isOnlyGuilds
+        return this
+    }
+
+    override fun setNsfw(isNsfw: Boolean): SlashCommandBuilder {
+        this.isNsfw = isNsfw
+        return this
+    }
+
+    override fun addArgument(): SlashCommandArgument {
+        val arg = Argument(this)
+        this.arguments.add(arg)
+        return arg
+    }
+
+    override fun build(): Command {
+        TODO()
     }
 }
 
@@ -94,9 +140,7 @@ internal class SimpleBuilder(
 
 
     override fun addCommand(command: SlashCommand): SimpleGroupBuilder {
-        val builder = CommandBuilder(this, command)
-
-        this.commands.add(builder)
+        CommandBuilder(this, command)
         return this
     }
 
