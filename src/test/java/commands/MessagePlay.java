@@ -1,15 +1,15 @@
 package commands;
 
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.cmdfw.extras.checks.BuiltinChecks;
 import org.cmdfw.extras.music.GlobalMusicManager;
 import org.cmdfw.extras.music.GuildMusicManager;
 import org.cmdfw.extras.music.Source;
-import org.cmdfw.extras.music.Track;
+import org.cmdfw.extras.music.GuildItem;
 import org.cmdfw.message.MessageCommand;
 import org.cmdfw.message.MessageCommandBuilder;
 import org.cmdfw.message.MessageCommandContext;
@@ -32,12 +32,19 @@ public class MessagePlay implements MessageCommand {
     @Override
     public void execute(MessageCommandContext context) throws Exception {
         String url = context.getArgs().get(0);
+        var a = new Object();
 
-        List<Track> tracks = manager.getGuildPlayer(context.getEvent().getGuild())
+
+        GuildItem track = manager.getGuildPlayer(context.getEvent().getGuild())
                 .getTrackSearchHelper()
                 .search(Source.YoutubeOrLink, url);
 
-        tracks.get(0).enqueue();
+        if(track != null){
+            System.out.println("Track not null");
+            track.enqueue();
+        }
+        else
+            System.out.println("null track");
     }
 
     public boolean joinIfNeeded(MessageCommandContext context) {
@@ -45,14 +52,18 @@ public class MessagePlay implements MessageCommand {
         AudioManager guildManager = context.getEvent().getGuild().getAudioManager();
         if(!guildManager.isConnected() && guildManager.getConnectionStatus() == ConnectionStatus.NOT_CONNECTED)
         {
+            guildManager.setSendingHandler(m.getHandler());
+            System.out.println("Setting handler");
             Member member = context.getEvent().getGuild().getMember(context.getEvent().getAuthor());
 
-            if(member.getVoiceState() != null) {
-                AudioChannelUnion c = member.getVoiceState().getChannel();
-                guildManager.openAudioConnection(c);
-            }
+            try {
+                GuildVoiceState v = member.getVoiceState();
+                if(member.getVoiceState() != null) {
+                    AudioChannelUnion c = v.getChannel();
+                    guildManager.openAudioConnection(c);
+                }
+            } catch (Exception ignored) {}
         }
-        guildManager.setSendingHandler(m.getHandler());
 
         return true;
     }

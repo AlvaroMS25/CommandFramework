@@ -1,14 +1,10 @@
 package org.cmdfw.extras.music;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
-import java.util.Optional;
-
-public class Track {
+public class GuildItem {
     private Item item;
     private GuildMusicManager manager;
 
-    Track(Item item, GuildMusicManager manager) {
+    GuildItem(Item item, GuildMusicManager manager) {
         this.item = item;
         this.manager = manager;
     }

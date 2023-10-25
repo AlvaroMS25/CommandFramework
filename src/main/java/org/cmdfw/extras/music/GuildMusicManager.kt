@@ -2,16 +2,15 @@ package org.cmdfw.extras.music
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
+import kotlin.concurrent.thread
 
 class GuildMusicManager(
-    manager: AudioPlayerManager
+    private val manager: AudioPlayerManager
 ) {
-    private val player: AudioPlayer
-    private val scheduler: TrackScheduler
+    private val player: AudioPlayer = manager.createPlayer()
+    private val scheduler: TrackScheduler = TrackScheduler(player)
 
     init {
-        player = manager.createPlayer()
-        scheduler = TrackScheduler(player)
         player.addListener(scheduler)
     }
 
@@ -23,7 +22,5 @@ class GuildMusicManager(
         return AudioPlayerSendHandler(player)
     }
 
-    fun getTrackSearchHelper(): GuildTrackSearchHelper {
-        TODO()
-    }
+    fun getTrackSearchHelper() = GuildTrackSearchHelper(manager, this)
 }

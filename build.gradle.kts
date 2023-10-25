@@ -12,13 +12,16 @@ val lavaplayerVersion = "2.0.2"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     api("net.dv8tion:JDA:$jdaV")
     api("io.github.cdimascio:dotenv-java:3.0.0")
     api("dev.arbjerg:lavaplayer:$lavaplayerVersion")
+    //testImplementation("ch.qos.logback:logback-classic:1.4.11")
     testImplementation(kotlin("test"))
 }
 

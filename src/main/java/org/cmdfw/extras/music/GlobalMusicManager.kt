@@ -5,19 +5,21 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import net.dv8tion.jda.api.entities.Guild
 import java.util.concurrent.ConcurrentHashMap
 
-class GlobalMusicManager(private val resultLoader: Any) {
+class GlobalMusicManager {
     private val manager = DefaultAudioPlayerManager()
-    private val players = ConcurrentHashMap<Long, GuildMusicManager>()
+    private val players = HashMap<Long, GuildMusicManager>()
 
     init {
         AudioSourceManagers.registerRemoteSources(manager)
         AudioSourceManagers.registerLocalSource(manager)
     }
 
+    @Synchronized
     fun getGuildPlayer(guild: Guild) : GuildMusicManager {
         return getGuildPlayer(guild.id.toLong())
     }
 
+    @Synchronized
     fun getGuildPlayer(guild: Long) : GuildMusicManager {
         return if(players.contains(guild)) {
             players[guild]!!
@@ -28,7 +30,5 @@ class GlobalMusicManager(private val resultLoader: Any) {
         }
     }
 
-    fun getTrackSearchHelper() {
-
-    }
+    fun getTrackSearchHelper() = TrackSearchHelper(manager)
 }

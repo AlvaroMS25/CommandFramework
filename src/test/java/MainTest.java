@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.cmdfw.Framework;
+import org.cmdfw.extras.music.GlobalMusicManager;
 import org.cmdfw.slash.SlashCommandManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,9 @@ public class MainTest {
                 .build();
 
         Framework f = new Framework(j);
+        GlobalMusicManager musicManager = new GlobalMusicManager();
 
-        f.getCommandManager().register(new MessageTestImpl());
+        f.getCommandManager().register(new MessageTestImpl()).register(new MessagePlay(musicManager));
         SlashCommandManager manager = f.getSlashCommandManager();
         manager.register(new SlashSimple());
         manager.register(new SlashSimpleGroup());

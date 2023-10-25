@@ -1,8 +1,11 @@
 package org.cmdfw.extras.music
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
+import com.sedmelluq.discord.lavaplayer.track.AudioItem
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.runBlocking
 import java.net.URL
 
 private fun isUrl(url: String): Boolean {
@@ -23,26 +26,45 @@ private fun getSearchQuery(source: Source, query: String): String {
 }
 
 class TrackSearchHelper(
-    private val manager: DefaultAudioPlayerManager,
+    private val manager: AudioPlayerManager,
 ) {
-    fun search(source: Source, query: String): List<Item> {
-        val resultHandler = DefaultLoadResultHandler()
+    fun search(source: Source, query: String): Item? {
+        val chan = Channel<AudioItem?>(1)
+        val resultHandler = DefaultLoadResultHandler(chan)
         manager.loadItem(getSearchQuery(source, query), resultHandler)
+
+        val item = mapItem(runBlocking {
+            val v = chan.receive()
+            v
+        })
+
         if(resultHandler.exception != null)
             throw resultHandler.exception!!
-        return resultHandler.mapTracks()
+
+        return item
+    }
+
+    companion object {
+        fun mapItem(track: AudioItem?): Item? {
+            return if(track is AudioTrack)
+                Item(track)
+            else if(track is AudioPlaylist)
+                Item(track)
+            else null
+        }
     }
 }
 
 class GuildTrackSearchHelper(
-    private val manager: DefaultAudioPlayerManager,
+    private val manager: AudioPlayerManager,
     private val guildPlayer: GuildMusicManager
 ) {
-    fun search(source: Source, query: String): List<Track> {
-        return TrackSearchHelper(manager)
+    fun search(source: Source, query: String): GuildItem? {
+        val item = TrackSearchHelper(manager)
             .search(source, query)
-            .map {
-                Track(it, guildPlayer)
-            }.toList()
+
+        return item?.let {
+            GuildItem(it, guildPlayer)
+        }
     }
 }
