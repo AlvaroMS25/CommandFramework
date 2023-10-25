@@ -39,6 +39,10 @@ class GuildTrackSearchHelper(
     private val guildPlayer: GuildMusicManager
 ) {
     fun search(source: Source, query: String): List<Track> {
-        TODO()
+        return TrackSearchHelper(manager)
+            .search(source, query)
+            .map {
+                Track(it, guildPlayer)
+            }.toList()
     }
 }

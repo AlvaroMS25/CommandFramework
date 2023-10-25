@@ -22,4 +22,8 @@ class GuildMusicManager(
     fun getHandler(): AudioPlayerSendHandler {
         return AudioPlayerSendHandler(player)
     }
+
+    fun getTrackSearchHelper(): GuildTrackSearchHelper {
+        TODO()
+    }
 }
