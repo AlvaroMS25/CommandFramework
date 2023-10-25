@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
-class DefaultLoadResultHandler(private val channel: Channel<AudioItem?>): AudioLoadResultHandler {
+internal class DefaultLoadResultHandler(private val channel: Channel<AudioItem?>): AudioLoadResultHandler {
     internal var exception: FriendlyException? = null
 
     override fun trackLoaded(track: AudioTrack?) {

@@ -32,19 +32,14 @@ public class MessagePlay implements MessageCommand {
     @Override
     public void execute(MessageCommandContext context) throws Exception {
         String url = context.getArgs().get(0);
-        var a = new Object();
-
 
         GuildItem track = manager.getGuildPlayer(context.getEvent().getGuild())
                 .getTrackSearchHelper()
                 .search(Source.YoutubeOrLink, url);
 
         if(track != null){
-            System.out.println("Track not null");
             track.enqueue();
         }
-        else
-            System.out.println("null track");
     }
 
     public boolean joinIfNeeded(MessageCommandContext context) {

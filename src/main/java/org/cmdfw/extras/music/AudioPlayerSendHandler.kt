@@ -6,6 +6,10 @@ import net.dv8tion.jda.api.audio.AudioSendHandler
 import java.nio.Buffer
 import java.nio.ByteBuffer
 
+/**
+ * A class in charge of providing the discord gateway with
+ * opus frames
+ */
 class AudioPlayerSendHandler(
     private val player: AudioPlayer
 ) : AudioSendHandler {

@@ -46,11 +46,11 @@ class TrackSearchHelper(
 
     companion object {
         fun mapItem(track: AudioItem?): Item? {
-            return if(track is AudioTrack)
-                Item(track)
-            else if(track is AudioPlaylist)
-                Item(track)
-            else null
+            return when (track) {
+                is AudioTrack -> Item(track)
+                is AudioPlaylist -> Item(track)
+                else -> null
+            }
         }
     }
 }
