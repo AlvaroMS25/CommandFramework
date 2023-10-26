@@ -2,6 +2,7 @@ package org.cmdfw.slash
 
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import org.cmdfw.slash.builders.*
+import java.util.function.Consumer
 
 internal class CommandBuilder(
     container: InternalSlashCommandContainer,
@@ -55,7 +56,7 @@ internal class CommandBuilder(
     }
 }
 
-internal class DeferredCommandBuilder: BuildableContainer<Command>, SlashCommandBuilder {
+internal class DeferredCommandBuilder: BuildableContainer<Command>, DeferredSlashCommandBuilder {
     val arguments = mutableListOf<Argument>()
     lateinit var name: String
     lateinit var description: String
@@ -63,27 +64,27 @@ internal class DeferredCommandBuilder: BuildableContainer<Command>, SlashCommand
     var guildOnly = false
     var isNsfw = false
 
-    override fun setName(name: String): SlashCommandBuilder {
+    override fun setName(name: String): DeferredSlashCommandBuilder {
         this.name = name
         return this
     }
 
-    override fun setDescription(description: String): SlashCommandBuilder {
+    override fun setDescription(description: String): DeferredSlashCommandBuilder {
         this.description = description
         return this
     }
 
-    override fun setDefaultPermissions(permission: DefaultMemberPermissions): SlashCommandBuilder {
+    override fun setDefaultPermissions(permission: DefaultMemberPermissions): DeferredSlashCommandBuilder {
         this.defaultMemberPermissions = permission
         return this
     }
 
-    override fun setGuildOnly(isOnlyGuilds: Boolean): SlashCommandBuilder {
+    override fun setGuildOnly(isOnlyGuilds: Boolean): DeferredSlashCommandBuilder {
         this.guildOnly = isOnlyGuilds
         return this
     }
 
-    override fun setNsfw(isNsfw: Boolean): SlashCommandBuilder {
+    override fun setNsfw(isNsfw: Boolean): DeferredSlashCommandBuilder {
         this.isNsfw = isNsfw
         return this
     }
@@ -92,6 +93,10 @@ internal class DeferredCommandBuilder: BuildableContainer<Command>, SlashCommand
         val arg = Argument(this)
         this.arguments.add(arg)
         return arg
+    }
+
+    override fun setHandler(handler: Consumer<SlashCommandContext>) {
+        TODO("Not yet implemented")
     }
 
     override fun build(): Command {
