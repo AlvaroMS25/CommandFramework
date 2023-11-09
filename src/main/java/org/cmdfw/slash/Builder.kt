@@ -6,7 +6,7 @@ import java.util.function.Consumer
 
 internal class CommandBuilder(
     container: InternalSlashCommandContainer,
-    val slashCommand: SlashCommand
+    private val slashCommand: SlashCommand
 ) : SlashCommandBuilder, InternalSlashCommand {
     private val arguments = mutableListOf<Argument>()
     private lateinit var name: String
@@ -136,7 +136,7 @@ internal class DeferredCommandBuilder(
     }
 
     override fun build(): Command {
-        TODO()
+        return Command(this)
     }
 
     override fun getArguments(): MutableList<Argument> {

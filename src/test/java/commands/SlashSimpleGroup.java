@@ -11,6 +11,21 @@ public class SlashSimpleGroup implements SubCommandGroup {
     public void register(SimpleGroupBuilder builder) {
         builder.setName("simplet")
                 .setDescription("Testing for simple group")
-                .addCommand(new InnerSlashTest());
+                .addCommand(new InnerSlashTest())
+                .addCommand()
+                .setHandler(this::handleSub)
+                .setName("vie")
+                .setDescription("la vie e dura")
+                .addArgument()
+                .string()
+                .setName("juan")
+                .setDescription("la via e ura")
+                .setRequired(false)
+                .finish();
+    }
+
+
+    void handleSub(SlashCommandContext c) {
+        c.getInteraction().reply("La via e ura, pero ma ura e la verura").queue();
     }
 }

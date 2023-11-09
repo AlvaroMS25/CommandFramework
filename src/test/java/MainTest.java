@@ -48,7 +48,7 @@ public class MainTest {
         j.awaitReady();
 
         System.out.println("Ready!");
-        //manager.registerAtGuild(854104362359586906L);
+        manager.registerAtGuild(854104362359586906L);
         while (true) {
             Thread.sleep(Long.MAX_VALUE);
         }
