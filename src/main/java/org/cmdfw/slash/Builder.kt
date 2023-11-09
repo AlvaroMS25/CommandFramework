@@ -7,13 +7,13 @@ import java.util.function.Consumer
 internal class CommandBuilder(
     container: InternalSlashCommandContainer,
     val slashCommand: SlashCommand
-) : BuildableContainer<Command>, SlashCommandBuilder {
-    val arguments = mutableListOf<Argument>()
-    lateinit var name: String
-    lateinit var description: String
-    var defaultMemberPermissions: DefaultMemberPermissions = DefaultMemberPermissions.ENABLED
-    var guildOnly = false
-    var isNsfw = false
+) : SlashCommandBuilder, InternalSlashCommand {
+    private val arguments = mutableListOf<Argument>()
+    private lateinit var name: String
+    private lateinit var description: String
+    private var defaultMemberPermissions: DefaultMemberPermissions = DefaultMemberPermissions.ENABLED
+    private var guildOnly = false
+    private var isNsfw = false
 
     init {
         slashCommand.register(this)
@@ -54,15 +54,50 @@ internal class CommandBuilder(
     override fun build(): Command {
         return Command(this)
     }
+
+    override fun getArguments(): MutableList<Argument> {
+        return arguments
+    }
+
+    override fun getSlashCommand(): SlashCommand {
+        return slashCommand
+    }
+
+    override fun getNsfw(): Boolean {
+        return isNsfw
+    }
+
+    override fun getGuildOnly(): Boolean {
+        return guildOnly
+    }
+
+    override fun getDefaultPermissions(): DefaultMemberPermissions {
+        return defaultMemberPermissions
+    }
+
+    override fun getName(): String {
+        return name
+    }
+
+    override fun getDescription(): String {
+        return description
+    }
 }
 
-internal class DeferredCommandBuilder: BuildableContainer<Command>, DeferredSlashCommandBuilder {
-    val arguments = mutableListOf<Argument>()
-    lateinit var name: String
-    lateinit var description: String
-    var defaultMemberPermissions: DefaultMemberPermissions = DefaultMemberPermissions.ENABLED
-    var guildOnly = false
-    var isNsfw = false
+internal class DeferredCommandBuilder(
+    container: InternalSlashCommandContainer
+): DeferredSlashCommandBuilder, InternalSlashCommand {
+    private val arguments = mutableListOf<Argument>()
+    private lateinit var name: String
+    private lateinit var description: String
+    private lateinit var handler: Consumer<SlashCommandContext>
+    private var defaultMemberPermissions: DefaultMemberPermissions = DefaultMemberPermissions.ENABLED
+    private var guildOnly = false
+    private var isNsfw = false
+
+    init {
+        container.registerCommand(this)
+    }
 
     override fun setName(name: String): DeferredSlashCommandBuilder {
         this.name = name
@@ -95,12 +130,54 @@ internal class DeferredCommandBuilder: BuildableContainer<Command>, DeferredSlas
         return arg
     }
 
-    override fun setHandler(handler: Consumer<SlashCommandContext>) {
-        TODO("Not yet implemented")
+    override fun setHandler(handler: Consumer<SlashCommandContext>): DeferredSlashCommandBuilder? {
+        this.handler = handler
+        return this
     }
 
     override fun build(): Command {
         TODO()
+    }
+
+    override fun getArguments(): MutableList<Argument> {
+        return arguments
+    }
+
+    override fun getSlashCommand(): SlashCommand {
+        val handler = this.handler
+
+        return object : SlashCommand {
+            override fun register(builder: SlashCommandBuilder?) {
+                throw UnsupportedOperationException(
+                    "Unreachable code entered"
+                )
+            }
+
+            override fun execute(context: SlashCommandContext?) {
+                if(context != null)
+                    handler.accept(context)
+            }
+        }
+    }
+
+    override fun getNsfw(): Boolean {
+        return isNsfw
+    }
+
+    override fun getGuildOnly(): Boolean {
+        return guildOnly
+    }
+
+    override fun getDefaultPermissions(): DefaultMemberPermissions {
+        return defaultMemberPermissions
+    }
+
+    override fun getName(): String {
+        return name
+    }
+
+    override fun getDescription(): String {
+        return description
     }
 }
 
@@ -113,7 +190,7 @@ internal class SimpleBuilder(
     var defaultMemberPermissions: DefaultMemberPermissions = DefaultMemberPermissions.ENABLED
     var guildOnly = false
     var isNsfw = false
-    val commands = mutableListOf<CommandBuilder>()
+    val commands = mutableListOf<InternalSlashCommand>()
 
     init {
         container?.registerSimpleGroup(this)
@@ -128,7 +205,7 @@ internal class SimpleBuilder(
         val map = mutableMapOf<String, Command>()
 
         for(c in this.commands) {
-            map[c.name] = c.build()
+            map[c.getName()] = c.build()
         }
 
         return map
@@ -140,7 +217,7 @@ internal class SimpleBuilder(
     }
 
     override fun addCommand(): DeferredSlashCommandBuilder {
-        TODO()
+        return DeferredCommandBuilder(this)
     }
 
 
@@ -173,7 +250,7 @@ internal class SimpleBuilder(
         return SubCommandGroupImpl(this)
     }
 
-    override fun registerCommand(builder: CommandBuilder) {
+    override fun registerCommand(builder: InternalSlashCommand) {
         this.commands.add(builder)
     }
 

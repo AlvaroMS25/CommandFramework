@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import org.cmdfw.slash.builders.SlashCommand
 
-internal class Command(builder: CommandBuilder): SlashCommandDataGetter {
+internal class Command(builder: InternalSlashCommand): SlashCommandDataGetter {
     var arguments = mutableListOf<Argument>()
     var name: String
     var description: String
@@ -16,13 +16,13 @@ internal class Command(builder: CommandBuilder): SlashCommandDataGetter {
     var inner: SlashCommand
 
     init {
-        arguments = builder.arguments
-        name = builder.name
-        description = builder.description
-        defaultMemberPermissions = builder.defaultMemberPermissions
-        guildOnly = builder.guildOnly
-        isNsfw = builder.isNsfw
-        inner = builder.slashCommand
+        arguments = builder.getArguments()
+        name = builder.getName()
+        description = builder.getDescription()
+        defaultMemberPermissions = builder.getDefaultPermissions()
+        guildOnly = builder.getGuildOnly()
+        isNsfw = builder.getNsfw()
+        inner = builder.getSlashCommand()
     }
 
     override fun getData(): SlashCommandData {

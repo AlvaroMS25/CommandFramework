@@ -20,8 +20,8 @@ internal class Manager(private val jda: JDA) : SlashCommandManager, InternalSlas
         this.groups[builder.name] = builder.build()
     }
 
-    override fun registerCommand(builder: CommandBuilder) {
-        this.commands[builder.name] = builder.build()
+    override fun registerCommand(builder: InternalSlashCommand) {
+        this.commands[builder.getName()] = builder.build()
     }
 
     private fun getCommands(): List<SlashCommandData> {

@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public interface DeferredSlashCommandBuilder extends SlashCommandBuilder {
-    void setHandler(@NotNull Consumer<SlashCommandContext> handler);
+    DeferredSlashCommandBuilder setHandler(@NotNull Consumer<SlashCommandContext> handler);
 }
