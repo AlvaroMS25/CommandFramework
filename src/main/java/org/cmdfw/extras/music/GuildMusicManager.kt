@@ -2,16 +2,20 @@ package org.cmdfw.extras.music
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
+import net.dv8tion.jda.api.entities.Guild
+import org.cmdfw.exceptions.NoGuildSetException
 
 
 /**
  * A voice manager for a single guild.
  */
 class GuildMusicManager(
-    private val manager: AudioPlayerManager
+    private val manager: AudioPlayerManager,
+    private val guildId: Long
 ) {
     private val player: AudioPlayer = manager.createPlayer()
     private val scheduler: TrackScheduler = TrackScheduler(player)
+    var guild: Guild? = null
 
     init {
         player.addListener(scheduler)
@@ -42,4 +46,12 @@ class GuildMusicManager(
      * @return The helper to search with within the guild context
      */
     fun getTrackSearchHelper() = GuildTrackSearchHelper(manager, this)
+
+    @Throws(NoGuildSetException::class)
+    fun getUtils(): GuildVoiceUtils {
+        if(guild == null)
+            throw NoGuildSetException(guildId)
+
+        return GuildVoiceUtils(this)
+    }
 }
