@@ -39,5 +39,15 @@ class GuildVoiceUtils(
         guild.audioManager.closeAudioConnection()
     }
 
+    fun isConnectedToVoice(): Boolean {
+        return guild.audioManager.isConnected
+    }
 
+    @Throws(NotConnectedToVoiceException::class)
+    fun getBotVoiceChannel(): AudioChannel {
+        if(!isConnectedToVoice())
+            throw NotConnectedToVoiceException(this.guild)
+
+        return guild.audioManager.connectedChannel!!
+    }
 }

@@ -5,11 +5,9 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.cmdfw.exceptions.NoGuildSetException;
 import org.cmdfw.extras.BuiltinChecks;
-import org.cmdfw.extras.music.GlobalMusicManager;
-import org.cmdfw.extras.music.GuildMusicManager;
-import org.cmdfw.extras.music.Source;
-import org.cmdfw.extras.music.GuildItem;
+import org.cmdfw.extras.music.*;
 import org.cmdfw.message.MessageCommand;
 import org.cmdfw.message.MessageCommandBuilder;
 import org.cmdfw.message.MessageCommandContext;
@@ -24,7 +22,7 @@ public class MessagePlay implements MessageCommand {
     public void register(MessageCommandBuilder builder) {
         builder.setName("play")
                 .setDescription("plays juan")
-                .addChecks(BuiltinChecks::onlyGuilds, this::joinIfNeeded);
+                .addChecks(BuiltinChecks::onlyGuilds, BuiltinChecks::userConnectedToVoiceChannel, this::joinIfNeeded);
     }
 
     @Override
@@ -42,20 +40,19 @@ public class MessagePlay implements MessageCommand {
 
     public boolean joinIfNeeded(MessageCommandContext context) {
         GuildMusicManager m = manager.getGuildPlayer(context.getEvent().getGuild());
-        AudioManager guildManager = context.getEvent().getGuild().getAudioManager();
-        if(!guildManager.isConnected() && guildManager.getConnectionStatus() == ConnectionStatus.NOT_CONNECTED)
-        {
-            guildManager.setSendingHandler(m.getHandler());
-            System.out.println("Setting handler");
+        try {
+            GuildVoiceUtils utils = m.getUtils();
+            if(utils.isConnectedToVoice()) {
+                return true;
+            }
+
             Member member = context.getEvent().getGuild().getMember(context.getEvent().getAuthor());
 
-            try {
-                GuildVoiceState v = member.getVoiceState();
-                if(member.getVoiceState() != null) {
-                    AudioChannelUnion c = v.getChannel();
-                    guildManager.openAudioConnection(c);
-                }
-            } catch (Exception ignored) {}
+            if (member.getVoiceState() != null) {
+                utils.joinChannel(member.getVoiceState().getChannel());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return true;

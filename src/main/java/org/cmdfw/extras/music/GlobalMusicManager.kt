@@ -26,7 +26,10 @@ class GlobalMusicManager {
      */
     @Synchronized
     fun getGuildPlayer(guild: Guild) : GuildMusicManager {
-        return getGuildPlayer(guild.id.toLong())
+        val manager = getGuildPlayer(guild.id.toLong())
+        if(manager.guild == null)
+            manager.guild = guild
+        return manager
     }
 
     /**
@@ -41,7 +44,7 @@ class GlobalMusicManager {
         return if(players.contains(guild)) {
             players[guild]!!
         } else {
-            val manager = GuildMusicManager(manager)
+            val manager = GuildMusicManager(manager, guild)
             players[guild] = manager
             manager
         }

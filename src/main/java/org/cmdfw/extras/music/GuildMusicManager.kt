@@ -21,6 +21,10 @@ class GuildMusicManager(
         player.addListener(scheduler)
     }
 
+    fun getPlayer(): AudioPlayer {
+        return player
+    }
+
     /**
      * Gets the underlying track scheduler, used to play tracks
      *
