@@ -14,13 +14,16 @@ public class Framework {
 
     @NotNull private Manager messageCommandManager;
     @NotNull private org.cmdfw.slash.Manager slashCommandManager;
+    @NotNull private ExecutorManagerImpl executorManager;
 
     public Framework(@NotNull JDA jda, @NotNull PrefixProvider provider) {
         this.jda = jda;
         this.provider = provider;
         this.messageCommandManager = new Manager(jda, provider, " ");
         this.slashCommandManager = new org.cmdfw.slash.Manager(jda);
+        this.executorManager = new ExecutorManagerImpl();
     }
+
     public Framework(JDA jda) {
         this(jda, new PrefixProvider("!"));
     }
@@ -31,7 +34,7 @@ public class Framework {
     }
 
     public EventListener getEventListener() {
-        return new EventListenerImpl(this.messageCommandManager, this.slashCommandManager);
+        return new EventListenerImpl(this.messageCommandManager, this.slashCommandManager, executorManager);
     }
 
     public void setPrefixProvider(PrefixProvider provider) {

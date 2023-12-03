@@ -10,21 +10,28 @@ import org.cmdfw.message.Manager as MessageCommandManager
 
 internal class EventListenerImpl(
     private val messageCommandManager: MessageCommandManager,
-    private val slashCommandManager: SlashCommandManager
+    private val slashCommandManager: SlashCommandManager,
+    private val executorManager: ExecutorManagerImpl
 ) : ListenerAdapter() {
 
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
-        slashCommandManager.runCommand(event)
+        executorManager.execute {
+            slashCommandManager.runCommand(event)
+        }
     }
 
     override fun onCommandAutoCompleteInteraction(event: CommandAutoCompleteInteractionEvent) {
-        slashCommandManager.autocomplete(event)
+        executorManager.execute {
+            slashCommandManager.autocomplete(event)
+        }
     }
 
     @Throws(Exception::class, UncompleteQuotedArgumentException::class)
     override fun onMessageReceived(event: MessageReceivedEvent) {
-        messageCommandManager.processEvent(event)
+        executorManager.execute {
+            messageCommandManager.processEvent(event)
+        }
     }
 
 }
