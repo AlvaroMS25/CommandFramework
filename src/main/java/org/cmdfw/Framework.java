@@ -15,13 +15,15 @@ public class Framework {
     @NotNull private Manager messageCommandManager;
     @NotNull private org.cmdfw.slash.Manager slashCommandManager;
     @NotNull private ExecutorManagerImpl executorManager;
+    @NotNull private Configuration configuration;
 
     public Framework(@NotNull JDA jda, @NotNull PrefixProvider provider) {
         this.jda = jda;
         this.provider = provider;
         this.messageCommandManager = new Manager(jda, provider, " ");
         this.slashCommandManager = new org.cmdfw.slash.Manager(jda);
-        this.executorManager = new ExecutorManagerImpl();
+        this.configuration = new Configuration();
+        this.executorManager = new ExecutorManagerImpl(configuration.getExecutionMode());
     }
 
     public Framework(JDA jda) {

@@ -14,8 +14,6 @@ internal class ExecutorManagerImpl(
     private var pool: ThreadPoolExecutor? = null
     private val logger = LoggerFactory.getLogger(ExecutorManager::class.java)
 
-    constructor(): this(ExecutionMode.OwnThread)
-
     init {
         if(mode == ExecutionMode.ThreadPool) {
             pool = ThreadPoolExecutor(
